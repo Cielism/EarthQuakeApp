@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Background rectangle with light gray color -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#CCCCCC" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+
+    <!-- Centered text as placeholder -->
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@android:drawable/ic_dialog_info" />
+    </item>
+
+</layer-list>
