@@ -40,7 +40,7 @@ public class Deprem {
         }
     }
 
-    // Getters and setters
+    // Getter ve Setterlar
     public String getSiddet() {
         return siddet;
     }

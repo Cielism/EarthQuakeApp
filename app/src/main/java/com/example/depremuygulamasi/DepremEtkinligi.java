@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.SearchView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -21,6 +21,8 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 
@@ -28,8 +30,7 @@ public class DepremEtkinligi extends Activity {
 
     private ArrayList<Deprem> depremListesi;
     private DepremAdaptoru adaptorum;
-    SearchView aramaKutusu;
-
+    private SearchView aramaKutusu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,9 @@ public class DepremEtkinligi extends Activity {
 
         aramaKutusu = findViewById(R.id.aramaKutusu);
         Button geriDon = findViewById(R.id.geriDonButonu);
+        Button btnBuyukten = findViewById(R.id.btnBuyukten);
+        Button btnKucukten = findViewById(R.id.btnKucukten);
+
         geriDon.setOnClickListener(view -> finish());
 
         depremListesi = new ArrayList<>();
@@ -45,72 +49,60 @@ public class DepremEtkinligi extends Activity {
         adaptorum = new DepremAdaptoru(this, depremListesi);
         liste.setAdapter(adaptorum);
 
+        btnBuyukten.setOnClickListener(v -> {
+            Collections.sort(depremListesi, (d1, d2) -> Double.compare(Double.parseDouble(d2.getSiddet()), Double.parseDouble(d1.getSiddet())));
+            adaptorum.updateData(depremListesi);
+        });
+
+        btnKucukten.setOnClickListener(v -> {
+            Collections.sort(depremListesi, (d1, d2) -> Double.compare(Double.parseDouble(d1.getSiddet()), Double.parseDouble(d2.getSiddet())));
+            adaptorum.updateData(depremListesi);
+        });
+
         aramaKutusu.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
+            public boolean onQueryTextSubmit(String query) { return false; }
+
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (adaptorum != null) {
-                    adaptorum.getFilter().filter(newText);
-                }
+                adaptorum.getFilter().filter(newText);
                 return false;
             }
         });
 
-        // VERİ ÇEKMEYİ BAŞLAT
         depremVerileriniCek();
     }
 
     private void depremVerileriniCek() {
-        String url = "https://earthquake.usgs.gov/fdsnws/event/1/query?" +
-                "format=geojson&orderby=time&limit=300&minmag=1";
+        String url = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&limit=300&minmag=1";
+        RequestQueue queue = Volley.newRequestQueue(this);
 
-        RequestQueue istekSirasi = Volley.newRequestQueue(this);
-
-        JsonObjectRequest jsonIstek = new JsonObjectRequest(
-                Request.Method.GET,
-                url,
-                null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject cevap) {
-                        depremVerisiniIsle(cevap);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError hata) {
-                        Toast.makeText(DepremEtkinligi.this,
-                                "Veri çekilemedi: " + hata.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                    }
-                }
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                response -> depremVerisiniIsle(response),
+                error -> Toast.makeText(DepremEtkinligi.this, "Veri çekilemedi: " + error.getMessage(), Toast.LENGTH_LONG).show()
         );
 
-        istekSirasi.add(jsonIstek);
+        queue.add(request);
     }
 
     private void depremVerisiniIsle(JSONObject json) {
         try {
-            JSONArray depremler = json.getJSONArray("features");
-
+            JSONArray features = json.getJSONArray("features");
             depremListesi.clear();
 
-            for (int i = 0; i < depremler.length(); i++) {
-                JSONObject deprem = depremler.getJSONObject(i);
-                JSONObject ozellikler = deprem.getJSONObject("properties");
+            for (int i = 0; i < features.length(); i++) {
+                JSONObject deprem = features.getJSONObject(i);
+                JSONObject properties = deprem.getJSONObject("properties");
 
-                double siddet = ozellikler.getDouble("mag");
-                String konum = ozellikler.getString("place");
-                long zaman = ozellikler.getLong("time");
+                double mag = properties.getDouble("mag");
+                String place = properties.getString("place");
+                long time = properties.getLong("time");
 
-                Date tarih = new Date(zaman);
+                Date date = new Date(time);
                 SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", new Locale("tr"));
-                String tarihStr = sdf.format(tarih);
+                String dateStr = sdf.format(date);
 
-                depremListesi.add(new Deprem(String.valueOf(siddet), konum, tarihStr, zaman));
+                depremListesi.add(new Deprem(String.valueOf(mag), place, dateStr, time));
             }
 
             adaptorum.updateData(depremListesi);
