@@ -5,80 +5,82 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:background="@color/white">
+    android:background="@color/dark_bg">
 
-    <!-- Üstte başlık -->
+    <!-- Başlık -->
     <TextView
         android:id="@+id/tvBaslik"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="AFET Gözlem"
-        android:textSize="28sp"
+        android:textSize="32sp"
         android:textStyle="bold"
-        android:textColor="@color/black"
+        android:textColor="@android:color/white"
+        android:fontFamily="sans-serif-medium"
         android:gravity="center"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Buton -->
+    <!-- Anma Mesajı -->
+    <TextView
+        android:id="@+id/tvMemorial"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="🕯 6 Şubat 2023 - Unutulmaz Acımız\nKahramanmaraş merkezli depremde kaybettiğimiz canlarımızı rahmetle anıyoruz.\n\nO gün hepimizin içi yandı... Unutmadık, unutmayacağız. 🇹🇷"
+        android:textColor="@android:color/white"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        android:fontFamily="sans-serif-light"
+        android:padding="16dp"
+        android:background="@drawable/bg_card_transparent"
+        android:elevation="4dp"
+        app:layout_constraintTop_toBottomOf="@id/tvBaslik"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Deprem Fotoğrafı -->
+    <ImageView
+        android:id="@+id/imgDeprem"
+        android:layout_width="0dp"
+        android:layout_height="180dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/deprem_photo_placeholder"
+        app:layout_constraintTop_toBottomOf="@id/tvMemorial"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_rounded_corners"/>
+
+    <!-- Depremleri Gör Butonu -->
     <Button
         android:id="@+id/btnDepremleriGor"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Depremleri Gör"
-        android:textSize="20sp"
+        android:text="📍 Depremleri Gör"
+        android:textSize="18sp"
         android:textAllCaps="false"
-        android:backgroundTint="@color/purple_500"
+        android:backgroundTint="@color/purple"
         android:textColor="@android:color/white"
-        android:elevation="8dp"
-        android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@id/tvBaslik"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp"/>
-
-    <!-- Görsel resim placeholder -->
-    <ImageView
-        android:id="@+id/imgDeprem"
-        android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/deprem_photo_placeholder"
-        app:layout_constraintTop_toBottomOf="@id/btnDepremleriGor"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp"/>
-
-    <!-- Reklam alanı placeholder -->
-    <FrameLayout
-        android:id="@+id/adPlaceholder"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:background="#DDD"
+        android:elevation="6dp"
+        android:padding="14dp"
+        android:fontFamily="sans-serif"
         app:layout_constraintTop_toBottomOf="@id/imgDeprem"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="24dp"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Reklam Alanı"
-            android:gravity="center"
-            android:textColor="#666"
-            android:textStyle="italic"/>
-    </FrameLayout>
-
-    <!-- Bilgi alanı -->
+    <!-- Ekstra Bilgi Kartı -->
     <LinearLayout
         android:id="@+id/infoAlan"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp"
-        android:background="@drawable/rounded_corner_bg"
-        app:layout_constraintTop_toBottomOf="@id/adPlaceholder"
+        android:padding="16dp"
+        android:background="@drawable/bg_card_transparent"
+        android:elevation="4dp"
+        app:layout_constraintTop_toBottomOf="@id/btnDepremleriGor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="24dp">

@@ -65,7 +65,7 @@ public class DepremEtkinligi extends Activity {
 
     private void depremVerileriniCek() {
         String url = "https://earthquake.usgs.gov/fdsnws/event/1/query?" +
-                "format=geojson&orderby=time&limit=300&minmag=2";
+                "format=geojson&orderby=time&limit=300&minmag=1";
 
         RequestQueue istekSirasi = Volley.newRequestQueue(this);
 

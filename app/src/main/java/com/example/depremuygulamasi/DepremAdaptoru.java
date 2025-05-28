@@ -203,11 +203,9 @@ public class DepremAdaptoru extends ArrayAdapter<Deprem> implements Filterable {
     }
 
     private int getRenkKodunaGoreArkaPlan(double siddet) {
-        if (siddet < 2.5) {
-            return Color.parseColor("#2196F3"); // Mavi
-        } else if (siddet < 3.0) {
+        if (siddet <= 3) {
             return Color.parseColor("#4CAF50"); // Yeşil
-        } else if (siddet < 6.0) {
+        } else if (siddet <= 4) {
             return Color.parseColor("#FFC107"); // Sarı/Turuncu
         } else {
             return Color.parseColor("#F44336"); // Kırmızı
