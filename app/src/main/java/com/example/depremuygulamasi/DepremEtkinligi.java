@@ -110,7 +110,6 @@ public class DepremEtkinligi extends Activity {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", new Locale("tr"));
                 String tarihStr = sdf.format(tarih);
 
-                // Burada yeni "zaman" parametresini de Deprem nesnesine ekleyeceğiz (Deprem sınıfını da buna göre güncelle)
                 depremListesi.add(new Deprem(String.valueOf(siddet), konum, tarihStr, zaman));
             }
 
@@ -122,7 +121,6 @@ public class DepremEtkinligi extends Activity {
         }
     }
 
-    // Yeni metod: zaman farkını hesaplayıp Türkçe string döndürüyor
     public static String hesaplaKacOnce(long zamanMillis) {
         long simdi = System.currentTimeMillis();
         long fark = simdi - zamanMillis;
