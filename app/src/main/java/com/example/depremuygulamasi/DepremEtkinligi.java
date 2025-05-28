@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -27,34 +28,44 @@ public class DepremEtkinligi extends Activity {
 
     private ArrayList<Deprem> depremListesi;
     private DepremAdaptoru adaptorum;
+    SearchView aramaKutusu;
 
 
     @Override
-    protected void onCreate(Bundle kayitPaketi) {
-        super.onCreate(kayitPaketi);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_deprem);
 
-        if (getActionBar() != null) {
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+        aramaKutusu = findViewById(R.id.aramaKutusu);
+        Button geriDon = findViewById(R.id.geriDonButonu);
+        geriDon.setOnClickListener(view -> finish());
 
         depremListesi = new ArrayList<>();
-        adaptorum = new DepremAdaptoru(this, depremListesi);
-
         ListView liste = findViewById(R.id.liste);
+        adaptorum = new DepremAdaptoru(this, depremListesi);
         liste.setAdapter(adaptorum);
 
-        Button geriDonButonu = findViewById(R.id.geriDonButonu);
-        geriDonButonu.setOnClickListener(v -> finish());
+        aramaKutusu.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (adaptorum != null) {
+                    adaptorum.getFilter().filter(newText);
+                }
+                return false;
+            }
+        });
 
+        // VERİ ÇEKMEYİ BAŞLAT
         depremVerileriniCek();
     }
 
     private void depremVerileriniCek() {
         String url = "https://earthquake.usgs.gov/fdsnws/event/1/query?" +
-                "format=geojson&orderby=time&limit=300&minmag=4";
-
-
+                "format=geojson&orderby=time&limit=300&minmag=2";
 
         RequestQueue istekSirasi = Volley.newRequestQueue(this);
 
@@ -99,15 +110,32 @@ public class DepremEtkinligi extends Activity {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", new Locale("tr"));
                 String tarihStr = sdf.format(tarih);
 
-                depremListesi.add(new Deprem(String.valueOf(siddet), konum, tarihStr));
+                // Burada yeni "zaman" parametresini de Deprem nesnesine ekleyeceğiz (Deprem sınıfını da buna göre güncelle)
+                depremListesi.add(new Deprem(String.valueOf(siddet), konum, tarihStr, zaman));
             }
 
-            adaptorum.notifyDataSetChanged();
+            adaptorum.updateData(depremListesi);
 
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(this, "Veri işlenirken hata oluştu", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    // Yeni metod: zaman farkını hesaplayıp Türkçe string döndürüyor
+    public static String hesaplaKacOnce(long zamanMillis) {
+        long simdi = System.currentTimeMillis();
+        long fark = simdi - zamanMillis;
+
+        long saniye = fark / 1000;
+        long dakika = saniye / 60;
+        long saat = dakika / 60;
+        long gun = saat / 24;
+
+        if (gun > 0) return gun + " gün önce";
+        else if (saat > 0) return saat + " saat önce";
+        else if (dakika > 0) return dakika + " dakika önce";
+        else return "şimdi";
     }
 
     @Override
